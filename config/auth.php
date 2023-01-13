@@ -38,12 +38,17 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'customers',
+        ],
+
+        'web_new' => [
+            'driver' => 'session',
+            'provider' => 'outsmart_users',
         ],
 
         'api' => [
             'driver' => 'passport',
-            'provider' => 'users',
+            'provider' => 'outsmart_users',
         ],
     ],
 
@@ -65,8 +70,18 @@ return [
     */
 
     'providers' => [
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
+
         'users' => [
             'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+
+        'outsmart_users' => [
+            'driver' => 'outsmart_users',
             'model' => App\Models\User::class,
         ],
 
@@ -92,8 +107,20 @@ return [
     */
 
     'passwords' => [
+        'customers' => [
+            'provider' => 'customers',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'outsmart_users' => [
+            'provider' => 'outsmart_users',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

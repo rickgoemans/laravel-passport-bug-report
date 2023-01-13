@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,5 +48,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * Fix "login" route name not defined error on routes not implementing the Authenticate middleware.
+     * @see Authenticate
+     * @see https://github.com/laravel/passport/issues/1610
+     * @see https://github.com/laravel/passport/issues/1598
+     */
+    protected function unauthenticated($request, AuthenticationException $exception): Response
+    {
+        if (!$this->shouldReturnJson($request, $exception)) {
+            $exception = new AuthenticationException($exception->getMessage(), $exception->guards(), $exception->redirectTo() ?? route('auth.login-form'));
+        }
+
+        return parent::unauthenticated($request, $exception);
     }
 }
